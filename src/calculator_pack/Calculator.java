@@ -25,6 +25,7 @@ public class Calculator extends JFrame implements ActionListener {
     private final JTextArea screen = new JTextArea(5,40);
     private double firstNum = 0, secondNum = 0;
     private final JTextField calculatingTf = new JTextField(40);
+    private boolean euros;
 
     public Calculator() {
         init();
@@ -32,6 +33,8 @@ public class Calculator extends JFrame implements ActionListener {
 
     private void init() {
 
+        screen.setFont(new Font("Arial", Font.BOLD, 32));
+        setTitle("Calculator");
         add(panel);
         screen.setBackground(Color.BLACK);
         panel.setBackground(Color.BLACK);
@@ -69,6 +72,7 @@ public class Calculator extends JFrame implements ActionListener {
 
         switch (cmd) {
 
+            case "AC" -> screen.setText("");
             case "0" -> screen.setText(screen.getText() + "0");
             case "1" -> screen.setText(screen.getText() + "1");
             case "2" -> screen.setText(screen.getText() + "2");
@@ -88,7 +92,7 @@ public class Calculator extends JFrame implements ActionListener {
 
             case "+" -> {
                 if (!screen.getText().isEmpty()) {
-                    firstNum = Double.parseDouble(screen.getText());
+                    firstNum = Double.parseDouble(screen.getText().replace("€", ""));
                     operator = 1;
                     screen.setText("");
                 }
@@ -96,7 +100,7 @@ public class Calculator extends JFrame implements ActionListener {
 
             case "-" -> {
                 if (!screen.getText().isEmpty()) {
-                    firstNum = Double.parseDouble(screen.getText());
+                    firstNum = Double.parseDouble(screen.getText().replace("€", ""));
                     operator = 2;
                     screen.setText("");
                 }
@@ -104,7 +108,7 @@ public class Calculator extends JFrame implements ActionListener {
 
             case "x" -> {
                 if (!screen.getText().isEmpty()) {
-                    firstNum = Double.parseDouble(screen.getText());
+                    firstNum = Double.parseDouble(screen.getText().replace("€", ""));
                     operator = 3;
                     screen.setText("");
                 }
@@ -112,9 +116,21 @@ public class Calculator extends JFrame implements ActionListener {
 
             case "÷" -> {
                 if (!screen.getText().isEmpty()) {
-                    firstNum = Double.parseDouble(screen.getText());
+                    firstNum = Double.parseDouble(screen.getText().replace("€", ""));
                     operator = 4;
                     screen.setText("");
+                }
+            }
+
+            case "%" -> {
+                double num = Double.parseDouble(screen.getText().replace("€", ""));
+                screen.setText(String.valueOf(num / 100.0));
+            }
+
+            case "€" -> {
+                if (!screen.getText().contains("€")) {
+                    screen.setText("€" + screen.getText());
+                    euros = true;
                 }
             }
 
@@ -124,28 +140,51 @@ public class Calculator extends JFrame implements ActionListener {
 
         if (cmd.equalsIgnoreCase("=")) {
             if (!screen.getText().isEmpty()) {
-                secondNum = Double.parseDouble(screen.getText());
+                secondNum = Double.parseDouble(screen.getText().replace("€", ""));
 
                 switch (operator) {
                     case 1 -> { // addition
-                        screen.setText(String.valueOf(firstNum + secondNum));
-                        calculatingTf.setText(firstNum + " + " + secondNum + " = " + (firstNum + secondNum));
+                        if (euros) {
+                            screen.setText("€" + (firstNum + secondNum));
+                            calculatingTf.setText("€" + firstNum + " + " + "€" +  secondNum + " = " + (df.format(firstNum + secondNum)));
+                        } else {
+                            screen.setText(String.valueOf(firstNum + secondNum));
+                            calculatingTf.setText(firstNum + " + " + secondNum + " = " + (df.format(firstNum + secondNum)));
+                        }
                     }
                     case 2 -> { // subtraction
-                        screen.setText(String.valueOf(firstNum - secondNum));
-                        calculatingTf.setText(firstNum + " - " + secondNum + " = " + (firstNum - secondNum));
+                        if (euros) {
+                            screen.setText("€" + (firstNum - secondNum));
+                            calculatingTf.setText("€" + firstNum + " - " + "€" + secondNum + " = " + (df.format(firstNum - secondNum)));
+                        } else {
+                            screen.setText(String.valueOf(firstNum - secondNum));
+                            calculatingTf.setText(firstNum + " - " + secondNum + " = " + (df.format(firstNum - secondNum)));
+                        }
                     }
                     case 3 -> { // multiplication
-                        screen.setText(String.valueOf(firstNum * secondNum));
-                        calculatingTf.setText(firstNum + " x " + secondNum + " = " + (firstNum * secondNum));
+                        if (euros) {
+                            screen.setText("€" + (firstNum * secondNum));
+                            calculatingTf.setText("€" + firstNum + " x " + "€" + secondNum + " = " + (df.format(firstNum * secondNum)));
+                        } else {
+                            screen.setText(String.valueOf(firstNum * secondNum));
+                            calculatingTf.setText(firstNum + " x " + secondNum + " = " + (df.format(firstNum * secondNum)));
+                        }
                     }
                     case 4 -> { // division
-                        screen.setText(String.valueOf(firstNum / secondNum));
-                        calculatingTf.setText(firstNum + " / " + secondNum + " = " + (firstNum / secondNum));
+                        if (euros) {
+                            screen.setText("€" + (firstNum / secondNum));
+                            calculatingTf.setText("€" + firstNum + " / " + "€" + secondNum + " = " + (df.format(firstNum / secondNum)));
+                        } else {
+                            screen.setText(String.valueOf(firstNum / secondNum));
+                            calculatingTf.setText(firstNum + " / " + secondNum + " = " + (df.format(firstNum / secondNum)));
+                        }
                     }
                     default -> {
                     }
                 }
+
+                euros = false;
+
             }
         }
     }
